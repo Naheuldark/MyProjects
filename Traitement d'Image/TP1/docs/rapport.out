@@ -1,0 +1,7 @@
+\BOOKMARK [1][-]{section.1}{Lissage lin\351aire}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{FFT et filtrage fr\351quentiel}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Convolution spatiale}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Complexit\351 et comparaison des 2 m\351thodes}{section.1}% 4
+\BOOKMARK [1][-]{section.2}{D\351tection de contours}{}% 5
+\BOOKMARK [2][-]{subsection.2.1}{Op\351rateurs diff\351rentiels du premier ordre}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.2}{Op\351rateurs diff\351rentiels du deuxi\350me ordre}{section.2}% 7

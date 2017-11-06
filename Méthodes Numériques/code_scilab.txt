@@ -1,0 +1,398 @@
+############# PARTIE 1 #############
+
+driver("Rec")
+
+SR = 44100;         // Taux d'échantillonage
+k = 1/SR;           // Pas de discrétisation temporel : t_n = n*k
+TF = 4;             // Durée de la simulation
+NF = TF/k;          // Nombre d'instants
+
+L = 1;              // Longueur de la corde
+N = 93;             // Nombre de positions
+h = L/N;            // Pas de discrétisation spacial : x_l = l*h
+
+B = 0.001;          // Paramètre d'inharmonicité
+f = 110;            // Fréquence fondamentale
+
+rp = [0.3 0.7];     // Positions des micros
+out = zeros(NF,2); // Enregistrement en rp les déplacements u(:,p1) et u(:,p2)
+
+loss = [100, 10 ; 1000, 8]; // Couples de fréquence/temps décroissance
+
+
+//              Définition des constantes
+kappa = 2*f*sqrt(B)/%pi;    // Coefficient de raideur
+gamma = 2*f;        // Vitesse de propagation de l'onde
+xi_w1 = (-(gamma^2)+sqrt((gamma^4)+4*(kappa^2)*((loss(1,1)*2*%pi)^2)))/(2*kappa^2);
+xi_w2 = (-(gamma^2)+sqrt((gamma^4)+4*(kappa^2)*((loss(2,1)*2*%pi)^2)))/(2*kappa^2);
+sigma0 = (6*log(10)/(xi_w2-xi_w1))*((xi_w2/loss(1,2))-xi_w1/loss(2,2)); 
+sigma1 = (6*log(10)/(xi_w2-xi_w1))*((-1/loss(1,2))+1/loss(2,2));
+
+
+// Condition de stabilité du schéma : h >= hmin
+hmin = sqrt(((gamma^2)*(k^2)+sqrt((gamma^4)*(k^4)+16*(kappa^2)*(k^2)))/2);
+
+if h < hmin then
+    disp("Schéma non stable !!");
+    disp("h = "+string(h));
+    disp("hmin = "+string(hmin));
+    abort;
+end
+
+
+//              Définition des coefficients
+a1 = -(sigma1*k)/(h^2);
+a2 = 1+sigma0*k+(2*sigma1*k)/(h^2);
+b1 = (kappa^2)*(k^2)/(h^4);
+b2 = -(gamma^2)*(k^2)/(h^2)-4*(kappa^2)*(k^2)/(h^4);
+b3 = -2+2*(gamma^2)*(k^2)/(h^2)+6*(kappa^2)*(k^2)/(h^4);
+c1 = (sigma1*k)/(h^2);
+c2 = 1-sigma0*k-2*(sigma1*k)/(h^2);
+
+
+//              Définition des matrices A, B et C
+A = a2*diag(ones(N-1,1))+a1*diag(ones(N-2,1),-1)+a1*diag(ones(N-2,1),1);
+B = b3*diag(ones(N-1,1))+b2*diag(ones(N-2,1),-1)+b2*diag(ones(N-2,1),1)+b1*diag(ones(N-3,1),-2)+b1*diag(ones(N-3,1),2);
+B(1,1) = b3-b1; B(N-1,N-1) = b3-b1;
+C = c2*diag(ones(N-1,1))+c1*diag(ones(N-2,1),-1)+c1*diag(ones(N-2,1),1);
+
+
+//              Initialisation de u_n
+u_n = zeros(N-1,1);
+xo = 0.5;           // Position où la corde est pincée
+co = 1;             // Hauteur du pincement
+
+for xl=1:xo/h
+    u_n(xl) = co/xo * xl*h;
+end
+for xl=xo/h+1:N-1
+    u_n(xl) = co/(xo-1) * xl*h + co/(1-xo);
+end
+
+u_n_moins1 = u_n;
+u_n_plus1 = u_n;
+
+subplot(2,2,1);
+x = linspace(1,N-1);
+plot(x*h, u_n(x));
+xtitle("Animation de la corde u^n");
+a=gca();
+a.data_bounds=[0,-1.2 ; 1,1.2];
+
+dt = 0:NF-1;
+subplot(2,2,3);
+plot(dt, out(dt+1,1));
+xtitle("Onde sonore au micro 1");
+
+subplot(2,2,4);
+plot(dt, out(dt+1,2));
+xtitle("Onde sonore au micro 2");
+
+
+//              Itération et calcul des u_n
+for t=0:NF-1
+    disp("Temps : "+string(t));
+    drawlater;
+    u_n_plus1 = -inv(A) * (B * u_n + C * u_n_moins1);
+    out(t+1,1) = u_n_plus1(rp(1)/h);
+    out(t+1,2) = u_n_plus1(rp(2)/h);
+    
+    if modulo(t, 100)==0 then
+        clf();
+        subplot(2,2,1);
+        x = linspace(1,N-1);
+        plot(x*h, u_n(x));
+        xtitle("Animation de la corde u^n");
+        a=gca();
+        a.data_bounds=[0,-1.2 ; 1,1.2];
+        
+        subplot(2,2,3);
+        plot(dt, out(dt+1,1));
+        xtitle("Onde sonore au micro 1");
+        
+        subplot(2,2,4);
+        plot(dt, out(dt+1,2));
+        xtitle("Onde sonore au micro 2");
+        
+        nom_image='image_'+string(t)+'.gif';
+        xs2gif(gcf(),nom_image);
+    end    
+    
+    u_n_moins1 = u_n;
+    u_n = u_n_plus1;
+    drawnow;
+end
+
+//savewave("sonx0_0_5.wav",out(1 : size(out,1)),SR)
+//
+//y=fft(out(:,1));
+//clf();
+//title("x0 = 0,5");
+//subplot(2,1,1); plot2d(abs(y))
+//subplot(2,1,2); plot2d(fftshift(abs(y)))
+
+
+############# PARTIE 2 #############
+
+### Questions 16 à 19 ###
+
+driver("Rec")
+
+//              Discrétisation polaire de la surface en 2D
+Neta = 20;      // Nombre de points pour eta
+deta = 1/(Neta - 1);
+
+Ntheta = 40;    // Nombre de points pour theta
+dtheta = 1/(Ntheta - 1)*2*%pi;
+
+CFL = 0.8;      // Condition de stabilité
+dtau = CFL * deta * dtheta;
+
+c = 0.25;          // Vitesse de propagation de l'onde : c=sqrt(T/rho)
+
+N = 1601;
+
+
+w_nplus1 = zeros(Neta, Ntheta+1);
+for i=1:Neta
+    for j=1:Ntheta+1
+    	// Conditions initiales à changer 
+	w_nplus1(i,j) =	besselj(1, i*deta*3.83171)*cos(j*dtheta)/2
+	//w_nplus1(i,j) = besselj(0, i*deta*8.65373)
+        //w_nplus1(i,j) = besselj(0, i*deta*2.40483) + besselj(1, i*deta*3.83171)*cos(j*dtheta);	
+    end
+end
+
+w_n = w_nplus1;
+w_nmoins1 = w_nplus1;
+
+subplot(2,2,1);
+axe_eta = linspace(0,1,Neta);
+axe_theta = linspace(0,2*%pi,Ntheta+1);
+x = axe_eta' * cos(axe_theta);
+y = axe_eta' * sin(axe_theta);
+z = w_nplus1;
+[xx yy zz] = nf3d(x', y', z');
+plot3d1(xx,yy,zz, theta=300, alpha=60, leg="@@");
+xtitle("Solution numérique");
+a = gca();
+a.data_bounds = [-1,-1,-2 ; 1,1,2];
+
+
+w_ex = zeros(Neta, Ntheta+1);
+for i=1:Neta
+    for j=1:Ntheta+1
+    	// Conditions initiales à changer 
+
+	w_ex(i,j) =	besselj(0, i*deta*8.65373)
+        //w_ex(i,j) = besselj(0, i*deta*2.40483) + besselj(1, i*deta*3.83171)*cos(j*dtheta);
+	
+    end 
+end
+
+
+subplot(2,2,3);
+axe_eta = linspace(0,1,Neta);
+axe_theta = linspace(0,2*%pi,Ntheta+1);
+x = axe_eta' * cos(axe_theta);
+y = axe_eta' * sin(axe_theta);
+z = w_ex;
+[xex yex zex] = nf3d(x', y', z');
+plot3d1(xex,yex,zex, theta=300, alpha=60, leg="@@");
+xtitle("Solution analytique");
+a = gca();
+a.data_bounds = [-1,-1,-2 ; 1,1,2];
+
+
+subplot(2,2,4);
+dt=0:N;
+erreur_rel = zeros(1,N+1);
+
+//Erreurs relatives à changer
+
+erreur_rel(1) = norm(w_nplus1 - w_ex, 'inf')
+//erreur_rel(1) = erreur_rel(1) + (w_nplus1(1,1)-w_ex(1,1))/abs(w_ex(1,1));
+
+plot2d(dt,erreur_rel);
+xtitle("Erreur relative en eta = 0")
+
+for t=1:N
+    drawlater;
+    // --------------------------- CONDITIONS INITIALES ----------------------
+    
+    disp("Temps :"+string(t));
+    // Calcul de w_{1, j}
+    somme = 0
+    for j=1:Ntheta+1
+        somme = somme + w_n(2,j);
+    end
+    w_nplus1(1,1) = 4*dtau^2/deta^2 * (1/Ntheta * somme - w_n(1,1)) + 2*w_n(1,1)-w_nmoins1(1,1);
+    
+    for j=1:Ntheta+1
+        w_nplus1(1,j) = w_nplus1(1,1);
+    end
+    
+    // Calcul de w_{Neta, j}
+    for j=1:Ntheta+1
+        w_nplus1(Neta, j) = 0;
+    end
+    
+    for i=2:Neta-1
+        // Calcul de w_{i, 1}
+        w_nplus1(i,1) = dtau^2*((w_n(i+1,1)-2*w_n(i,1)+w_n(i-1,1))/deta^2 + 1/(i*deta*dtheta)^2 * (w_n(i,2)-2*w_n(i,1)+w_n(i,Ntheta+1)) + 1/(i*deta^2) * (w_n(i+1,1)-w_n(i-1,1))) + 2*w_n(i,1) - w_nmoins1(i,1);
+        
+        // Calcul de w_{i, Ntheta+1}
+        w_nplus1(i,Ntheta+1) = dtau^2*((w_n(i+1,Ntheta+1)-2*w_n(i,Ntheta+1)+w_n(i-1,Ntheta+1))/deta^2 + 1/(i*deta*dtheta)^2 * (w_n(i,1)-2*w_n(i,Ntheta+1)+w_n(i,Ntheta)) + 1/(i*deta^2) * (w_n(i+1,Ntheta+1)-w_n(i-1,Ntheta+1))) + 2*w_n(i,Ntheta+1) - w_nmoins1(i,Ntheta+1);
+        
+        // ------------------------ BOUCLE PRINCIPALE ---------------------
+        
+        for j=2:Ntheta
+            w_nplus1(i,j) = dtau^2*((w_n(i+1,j)-2*w_n(i,j)+w_n(i-1,j))/deta^2 + 1/(i*deta*dtheta)^2 * (w_n(i,j+1)-2*w_n(i,j)+w_n(i,j-1)) + 1/(i*deta^2) * (w_n(i+1,j)-w_n(i-1,j))) + 2*w_n(i,j) - w_nmoins1(i,j);
+        end
+    end
+    
+    for i=1:Neta
+        for j=1:Ntheta+1
+	    //Solution exacte à changer
+
+	    w_ex(i,j) = besselj(0, i*deta*8.65373)*cos(8.65373*t*dtau)
+            //w_ex(i,j) = besselj(0, i*deta*2.40483)*cos(2.40483*t) + besselj(1, i*deta*3.83171)*cos(j*dtheta)*cos(3.83171*t);
+        end 
+    end
+    
+    if modulo(t,25) == 1 then
+        clf();
+        
+        subplot(2,2,1);
+        z = w_nplus1;
+        [xx yy zz] = nf3d(x', y', z');
+        plot3d1(xx,yy,zz, theta=300, alpha=60, leg="@@");
+        xtitle("Solution numérique");
+        a = gca();
+        a.data_bounds = [-1,-1,-2 ; 1,1,2];
+        
+        subplot(2,2,3);
+        z = w_ex;
+        [xex yex zex] = nf3d(x', y', z');
+        plot3d1(xex,yex,zex, theta=300, alpha=60, leg="@@");
+        xtitle("Solution analytique");
+        a = gca();
+        a.data_bounds = [-1,-1,-2 ; 1,1,2];
+        
+        subplot(2,2,4);
+
+	//Erreurs relatives à changer
+	
+	erreur_rel(t) = norm(w_nplus1 - w_ex, 'inf')
+        //erreur_rel(t) = erreur_rel(t) + (w_nplus1(1,1)-w_ex(1,1))/abs(w_ex(1,1));
+        plot2d(dt,erreur_rel);
+	
+	//Titre à changer
+
+	xtitle("Erreur relative globale")
+        //xtitle("Erreur relative en eta = 0")
+        
+        nom_image='image_00'+string(t)+'.gif';
+        xs2gif(gcf(),nom_image);
+    end
+    
+    w_nmoins1 = w_n;
+    w_n = w_nplus1;
+    drawnow;
+end
+
+### Question 20 ###
+
+driver("Rec")
+
+//              Discrétisation polaire de la surface en 2D
+Neta = 40;      // Nombre de points pour eta
+deta = 1/(Neta - 1);
+
+Ntheta = 80;    // Nombre de points pour theta
+dtheta = 1/(Ntheta - 1)*2*%pi;
+
+CFL = 0.8;      // Condition de stabilité
+dtau = CFL * deta * dtheta;
+
+c = 0.25;          // Vitesse de propagation de l'onde : c=sqrt(T/rho)
+
+N = 1601;
+
+
+w_nplus1 = zeros(Neta, Ntheta+1);
+for i=1:Neta
+    for j=1:Ntheta+1
+    	// Conditions initiales à changer 
+
+	w_nplus1(i,j) =	besselj(1, i*deta*3.83171)*cos(j*dtheta)/2
+    end
+end
+
+w_n = w_nplus1;
+w_nmoins1 = w_nplus1;
+
+axe_eta = linspace(0,1,Neta);
+axe_theta = linspace(0,2*%pi,Ntheta+1);
+x = axe_eta' * cos(axe_theta);
+y = axe_eta' * sin(axe_theta);
+z = w_nplus1;
+[xx yy zz] = nf3d(x', y', z');
+plot3d1(xx,yy,zz, theta=300, alpha=60, leg="@@");
+xtitle("Solution numérique pour mode (1,1)");
+a = gca();
+a.data_bounds = [-1,-1,-2 ; 1,1,2];
+
+for t=1:N
+    drawlater;
+    // --------------------------- CONDITIONS INITIALES ----------------------
+    
+    disp("Temps :"+string(t));
+    // Calcul de w_{1, j}
+    somme = 0
+    for j=1:Ntheta+1
+        somme = somme + w_n(2,j);
+    end
+    w_nplus1(1,1) = 4*dtau^2/deta^2 * (1/Ntheta * somme - w_n(1,1)) + 2*w_n(1,1)-w_nmoins1(1,1);
+    
+    for j=1:Ntheta+1
+        w_nplus1(1,j) = w_nplus1(1,1);
+    end
+    
+    // Calcul de w_{Neta, j}
+    for j=1:Ntheta+1
+        w_nplus1(Neta, j) = 0;
+    end
+    
+    for i=2:Neta-1
+        // Calcul de w_{i, 1}
+        w_nplus1(i,1) = dtau^2*((w_n(i+1,1)-2*w_n(i,1)+w_n(i-1,1))/deta^2 + 1/(i*deta*dtheta)^2 * (w_n(i,2)-2*w_n(i,1)+w_n(i,Ntheta+1)) + 1/(i*deta^2) * (w_n(i+1,1)-w_n(i-1,1))) + 2*w_n(i,1) - w_nmoins1(i,1);
+        
+        // Calcul de w_{i, Ntheta+1}
+        w_nplus1(i,Ntheta+1) = dtau^2*((w_n(i+1,Ntheta+1)-2*w_n(i,Ntheta+1)+w_n(i-1,Ntheta+1))/deta^2 + 1/(i*deta*dtheta)^2 * (w_n(i,1)-2*w_n(i,Ntheta+1)+w_n(i,Ntheta)) + 1/(i*deta^2) * (w_n(i+1,Ntheta+1)-w_n(i-1,Ntheta+1))) + 2*w_n(i,Ntheta+1) - w_nmoins1(i,Ntheta+1);
+        
+        // ------------------------ BOUCLE PRINCIPALE ---------------------
+        
+        for j=2:Ntheta
+            w_nplus1(i,j) = dtau^2*((w_n(i+1,j)-2*w_n(i,j)+w_n(i-1,j))/deta^2 + 1/(i*deta*dtheta)^2 * (w_n(i,j+1)-2*w_n(i,j)+w_n(i,j-1)) + 1/(i*deta^2) * (w_n(i+1,j)-w_n(i-1,j))) + 2*w_n(i,j) - w_nmoins1(i,j);
+        end
+    end
+
+    if modulo(t,25) == 1 then
+        clf();
+        
+        z = w_nplus1;
+        [xx yy zz] = nf3d(x', y', z');
+        plot3d1(xx,yy,zz, theta=300, alpha=60, leg="@@");
+        xtitle("Solution numérique pour mode (1,1)");
+        a = gca();
+        a.data_bounds = [-1,-1,-2 ; 1,1,2];
+
+	nom_image='image_00'+string(t)+'.gif';
+        xs2gif(gcf(),nom_image);
+    end
+    
+    w_nmoins1 = w_n;
+    w_n = w_nplus1;
+    drawnow;
+end

@@ -1,0 +1,90 @@
+############# IMAGE ETUDIEE : formes1pets10.pgm #############
+
+RESULTATS POUR Filtre Médian
+
+Temps d'exectution du filtre :                    0.050000
+Estimation du bruit :                             155.940000
+PSNR entre l'image référence et l'image filtrée : 23.410083
+
+
+RESULTATS POUR Filtre Adaptatif Récursif
+
+Temps d'exectution du filtre :                    3.800000
+Estimation du bruit :                             232.780000
+PSNR entre l'image référence et l'image filtrée : 21.076272
+
+
+RESULTATS POUR Filtre Bilatéral
+
+Temps d'exectution du filtre :                    17.780000
+Estimation du bruit :                             232.780000
+PSNR entre l'image référence et l'image filtrée : 21.049508
+
+
+RESULTATS POUR Filtre NL-Means
+
+Temps d'exectution du filtre :                    5.460000
+Estimation du bruit :                             110.740000
+PSNR entre l'image référence et l'image filtrée : 22.051787
+
+
+############# IMAGE ETUDIEE : formes2bb30.pgm #############
+
+RESULTATS POUR Filtre Médian
+
+Temps d'exectution du filtre :                    0.030000
+Estimation du bruit :                             107.350000
+PSNR entre l'image référence et l'image filtrée : 18.932390
+
+
+RESULTATS POUR Filtre Adaptatif Récursif
+
+Temps d'exectution du filtre :                    3.780000
+Estimation du bruit :                             1.130000
+PSNR entre l'image référence et l'image filtrée : 30.028143
+
+
+RESULTATS POUR Filtre Bilatéral
+
+Temps d'exectution du filtre :                    17.790000
+Estimation du bruit :                             1.130000
+PSNR entre l'image référence et l'image filtrée : 29.734935
+
+
+RESULTATS POUR Filtre NL-Means
+
+Temps d'exectution du filtre :                    5.470000
+Estimation du bruit :                             22.600000
+PSNR entre l'image référence et l'image filtrée : 28.086866
+
+
+############# IMAGE ETUDIEE : globulesbb50.pgm #############
+
+RESULTATS POUR Filtre Médian
+
+Temps d'exectution du filtre :                    0.200000
+Estimation du bruit :                             71.190000
+PSNR entre l'image référence et l'image filtrée : 18.134994
+
+
+RESULTATS POUR Filtre Adaptatif Récursif
+
+Temps d'exectution du filtre :                    15.160000
+Estimation du bruit :                             9.040000
+PSNR entre l'image référence et l'image filtrée : 28.358312
+
+
+RESULTATS POUR Filtre Bilatéral
+
+Temps d'exectution du filtre :                    71.210000
+Estimation du bruit :                             3.390000
+PSNR entre l'image référence et l'image filtrée : 27.801971
+
+
+RESULTATS POUR Filtre NL-Means
+
+Temps d'exectution du filtre :                    21.870000
+Estimation du bruit :                             6.780000
+PSNR entre l'image référence et l'image filtrée : 28.071922
+
+
