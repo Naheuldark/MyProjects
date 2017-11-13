@@ -20,6 +20,10 @@ This C++ project simulates the ocean surface, implementing the Gerstner wave mod
 This project is a video game made from scratch using OpenGL and C++.
 It implements the shaders in GLSL, the whole rendering using OpenGL and the physics motor.
 
+### 3D Multiview Modeling software
+On-going project coded in C++ and OpenGL.
+It implements a 3D multiview modeler (cf README file in the dedicated directory).
+
 
 ## Numerical modeling
 
