@@ -79,11 +79,13 @@ bool loadOBJ(const char* filename,
 
 void addCube(Vec3f pos,
              Vec3f rot_dir, float rot_angle,
-             Vec3f scale)
+             Vec3f scale,
+             char* tex_name)
 {
     Mesh3D *cube = new Mesh3D(pos,
                               rot_dir, rot_angle,
-                              scale);
+                              scale,
+                              tex_name);
     std::list<Vec3f> vertices;
     std::list<Vec2f> uvs;
     std::list<Vec3f> normals;
@@ -99,11 +101,13 @@ void addCube(Vec3f pos,
 
 void addSphere(Vec3f pos,
                Vec3f rot_dir, float rot_angle,
-               Vec3f scale)
+               Vec3f scale,
+               char* tex_name)
 {
     Mesh3D *sphere = new Mesh3D(pos,
                                 rot_dir, rot_angle,
-                                scale);
+                                scale,
+                                tex_name);
     std::list<Vec3f> vertices;
     std::list<Vec2f> uvs;
     std::list<Vec3f> normals;

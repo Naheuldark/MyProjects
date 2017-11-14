@@ -103,7 +103,7 @@ void renderBitmapString(float x, float y, float z,
 void generateOBJ()
 {
     std::ofstream obj_file;
-    obj_file.open("scene2.obj");
+    obj_file.open("Output/scene.obj");
 
     int num_vertices = 0;
 

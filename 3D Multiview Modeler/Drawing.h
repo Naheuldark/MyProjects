@@ -30,11 +30,13 @@ bool loadOBJ(const char* filename,
 
 void addCube(Vec3f pos,
              Vec3f rot_dir, float rot_angle,
-             Vec3f scale);
+             Vec3f scale,
+             char* tex_name);
 
 void addSphere(Vec3f pos,
                Vec3f rot_dir, float rot_angle,
-               Vec3f scale);
+               Vec3f scale,
+               char* tex_name);
 
 void renderScaleSpace();
 

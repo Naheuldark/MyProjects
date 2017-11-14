@@ -72,7 +72,7 @@ FUNCTIONALITIES:
 KNOWN BUGS TO BE FIXED:
 - Some unknown lag may appears after several rotation around the whole scene
     --> the potential problem might be that some rendering is made incorrectly
-- FIXED ## The objects in the scene appear transparent
+- The objects in the scene appear transparent
     --> an option might not have been enabled or (unlikely since we use Blender OBJ files) the normals are not correct
 
 

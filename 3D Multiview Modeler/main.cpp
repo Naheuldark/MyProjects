@@ -144,25 +144,30 @@ int main(int argc, char **argv)
     // Add a few cubes in the renderables list to create a frame
     addCube(Vec3f(0.0,0.0,0.0),
             Vec3f(0.0,1.0,0.0), 0.0f,
-            Vec3f(10.0,0.1,10.0));
+            Vec3f(10.0,0.1,10.0),
+            "Textures/PPM/grass.ppm");
 
     addCube(Vec3f(5.0,2.5,0.0),
             Vec3f(0.0,1.0,0.0), 0.0f,
-            Vec3f(0.1,5.0,10.0));
+            Vec3f(0.1,5.0,10.0),
+            "Textures/PPM/marble.ppm");
 
     addCube(Vec3f(-5.0,2.5,0.0),
             Vec3f(0.0,1.0,0.0), 0.0f,
-            Vec3f(0.1,5.0,10.0));
+            Vec3f(0.1,5.0,10.0),
+            "Textures/PPM/marble.ppm");
 
     addCube(Vec3f(0.0,2.5,-5.0),
             Vec3f(0.0,1.0,0.0), 0.0f,
-            Vec3f(10,5.0,0.1));
+            Vec3f(10,5.0,0.1),
+            "Textures/PPM/marble.ppm");
 
 
 
     addSphere(Vec3f(0.0,1.0,0.0),
               Vec3f(0.0,1.0,0.0), 180.0f,
-              Vec3f(0.1,0.1,0.1));
+              Vec3f(0.1,0.1,0.1),
+              "Textures/PPM/stars.ppm");
 
 
     // Enter GLUT event processing cycle

@@ -16,12 +16,13 @@ class Mesh3D
 public:
     Mesh3D(Vec3f pos,
            Vec3f rot_dir, float rot_angle,
-           Vec3f scale) :
+           Vec3f scale,
+           char* tex_name) :
         m_pos(pos),
         m_rot_dir(rot_dir), m_rot_angle(rot_angle),
         m_scale(scale)
     {
-        m_tex = LoadPPM("Textures/marble.ppm", &m_tex_width, &m_tex_height, &m_tex_max);
+        m_tex = LoadPPM(tex_name, &m_tex_width, &m_tex_height, &m_tex_max);
         
         glEnable(GL_TEXTURE_2D);
         
@@ -190,9 +191,6 @@ public:
 
 
 private:
-    float m_verts[8][3] = { {-1,-1,1}, {-1,1,1}, {1,1,1}, {1,-1,1}, {-1,-1,-1}, {-1,1,-1}, {1,1,-1}, {1,-1,-1} };
-    float m_cols[6][3] = { {1,0,0}, {0,1,1}, {1,1,0}, {0,1,0}, {0,0,1}, {1,0,1} };
-
     GLubyte* m_tex;
     GLuint m_textures[1];
     int m_tex_width, m_tex_height, m_tex_max;
