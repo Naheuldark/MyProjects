@@ -8,7 +8,10 @@
 #include <list>
 #include <sstream>
 #include "Vec3.h"
+#include "Mesh3D.h"
 #include "PopUpMenu.h" // for the constants
+#include "Drawing.h"
+#include "Window.h"
 
 #include <GL/glut.h>
 
@@ -23,7 +26,7 @@ extern int xOrigin, yOrigin;
 extern float angle, psi, deltaAngle, deltaPsi;
 extern float lx, ly, lz;
 extern int mainWindow;
-/*extern std::list<Vec3f> point_list, color_list;*/
+extern std::list<Mesh3D> renderables;
 extern std::list<char*> historic;
 
 

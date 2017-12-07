@@ -18,6 +18,7 @@ void processExportMenu(int option)
 {
     switch (option) {
         case RENDER:
+            generateIMG();
             historic.push_front("Rendering the scene.");
             break;
         case OBJ:

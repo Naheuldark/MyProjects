@@ -51,8 +51,11 @@ int width, height;      // Width and height of the window
 
 
 int frame;
-long time, timebase;
+long my_time, timebase;
 char fps[50];
+
+
+float light_pos[] = {2,2,2,1};  // light position in the scene
 
 
 std::list<Mesh3D> renderables;  // Store all the renderables in the scene
@@ -165,7 +168,7 @@ int main(int argc, char **argv)
 
 
     addSphere(Vec3f(0.0,1.0,0.0),
-              Vec3f(0.0,1.0,0.0), 180.0f,
+              Vec3f(0.0,1.0,0.0), 0.0f,
               Vec3f(0.1,0.1,0.1),
               "Textures/PPM/stars.ppm");
 

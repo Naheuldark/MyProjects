@@ -21,6 +21,7 @@ extern int mainWindow;
 extern bool isPersp;
 extern float deltaForward, deltaRight;
 extern std::list<char*> historic;
+extern float light_pos[];
 
 
 void processNormalKeys(unsigned char key, int x, int y);

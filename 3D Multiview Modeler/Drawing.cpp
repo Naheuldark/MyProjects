@@ -150,15 +150,10 @@ void renderScaleSpace()
 
 void drawPoint(Vec3f x)
 {
-    /*point_list.push_back(x);*/
-
-    
-    glutSolidCube(1.0);
-
-/*    glColor3f(1.0, 1.0, 1.0);
-    glBegin(GL_POINTS);
-        glVertex3f(x.x, x.y, x.z);
-    glEnd();*/
+    addSphere(x,
+              Vec3f(0.0,1.0,0.0), 0.0f,
+              Vec3f(0.005,0.005,0.005),
+              "Textures/PPM/red.ppm");
 }
 
 void drawLine(Vec3f p1, Vec3f p2)
@@ -173,10 +168,16 @@ void drawLineBetweenPoints(Vec3f p1, Vec3f p2)
 
 void drawCube(Vec3f center)
 {
-
+    addCube(center,
+            Vec3f(0.0,1.0,0.0), 0.0f,
+            Vec3f(1,1,1),
+            "Textures/PPM/red.ppm");
 }
 
 void drawSphere(Vec3f center, float radius)
 {
-
+    addSphere(center,
+              Vec3f(0.0,1.0,0.0), 0.0f,
+              Vec3f(radius/20.0,radius/20.0,radius/20.0),
+              "Textures/PPM/red.ppm");
 }

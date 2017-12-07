@@ -29,8 +29,6 @@ void renderScenesw1()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //some light properties
-    float light_pos[] = {2,2,2,1};
-
     float amb[4] = {1,1,1, 1};
     float diff[4] = {1,1,1, 1};
     float spec[4] = {1,1,1, 1};
@@ -48,6 +46,12 @@ void renderScenesw1()
 
 
     glColor3f(1,1,1);
+
+    // LIGHT
+    glPushMatrix();
+        glTranslatef(light_pos[0], light_pos[1], light_pos[2]);
+        glutSolidSphere(0.1, 100, 100);
+    glPopMatrix();
 
     //set materials
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_amb);
@@ -73,16 +77,19 @@ void renderScenesw1()
     glDisable(GL_LIGHTING);
     glDisable(GL_LIGHT0);
     glDisable(GL_BLEND);
+    glDisable(GL_COLOR_MATERIAL);
+
+    glColor3f(1,1,1);
 
     // Display fps in the top window
     frame++;
 
-    time = glutGet(GLUT_ELAPSED_TIME);
+    my_time = glutGet(GLUT_ELAPSED_TIME);
 
-    if (time - timebase > 1000) {
+    if (my_time - timebase > 1000) {
         sprintf(fps, "FPS Counter: %4.2f",
-                frame*1000.0/(time-timebase));
-        timebase = time;
+                frame*1000.0/(my_time-timebase));
+        timebase = my_time;
         frame = 0;
     }
 

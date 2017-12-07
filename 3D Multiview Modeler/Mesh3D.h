@@ -100,18 +100,18 @@ public:
             y = (*vert).y;
             z = (*vert).z;
 
-            // Translate
-            x += m_pos.x;
-            y += m_pos.y;
-            z += m_pos.z;
-
             // Scale
             x *= m_scale.x;
             y *= m_scale.y;
             z *= m_scale.z;
 
+            // Translate
+            x += m_pos.x;
+            y += m_pos.y;
+            z -= m_pos.z;
+
             // Rotate
-            if (m_rot_dir.x == 1.0) {
+            /*if (m_rot_dir.x == 1.0) {
                 // Axis x
                 y = y*cos(m_rot_angle) - z*sin(m_rot_angle);
                 z = y*sin(m_rot_angle) + z*cos(m_rot_angle);
@@ -123,7 +123,8 @@ public:
                 // Axis z
                 x = x*cos(m_rot_angle) - y*sin(m_rot_angle);
                 y = x*sin(m_rot_angle) + y*cos(m_rot_angle);
-            }           
+            }
+            */          
 
             res.push_back(Vec3f(x,z,y));
         }
@@ -185,7 +186,78 @@ public:
         return img;
     }
 
+    /*
+     * Intersect function
+     * Compute the ray from the point to the light and returns true if there is
+     * an intersection with the mesh
+     */
+    bool intersect(Vec3f orig, Vec3f dest)
+    {
+        Vec3f dir = dest - orig;
+        float t;
+
+        int res = 0;
+
+        std::list<Vec3f>::iterator vert = m_vertices.begin();
+        while (vert != m_vertices.end()) {
+            Vec3f v0 = (*vert); vert++;
+            Vec3f v1 = (*vert); vert++;
+            Vec3f v2 = (*vert); vert++;
+
+            //std::cout << v0 << "\t" << v1 << "\t" << v2 << std::endl;
+
+            // compute plane's normal
+            Vec3f v0v1 = v1 - v0; 
+            Vec3f v0v2 = v2 - v0; 
+            // no need to normalize
+            Vec3f N = v0v1.cross(v0v2); // N 
+            float area2 = N.length(); 
+         
+            // Step 1: finding P
+         
+            // check if ray and plane are parallel ?
+            float NdotRayDirection = N.dot(dir); 
+            if (fabs(NdotRayDirection) < 0.0001) // almost 0 
+                continue; // they are parallel so they don't intersect !
+         
+            float d = N.dot(v0); 
+         
+            t = (N.dot(orig) + d) / NdotRayDirection; 
+            // check if the triangle is in behind the ray
+            if (t < 0) continue; // the triangle is behind 
+         
+            Vec3f P = orig + t * dir; 
+         
+            // Step 2: inside-outside test
+            Vec3f C; // vector perpendicular to triangle's plane 
+         
+            // edge 0
+            Vec3f edge0 = v1 - v0; 
+            Vec3f vp0 = P - v0; 
+            C = edge0.cross(vp0); 
+            if (N.dot(C) < 0) continue; // P is on the right side 
+         
+            // edge 1
+            Vec3f edge1 = v2 - v1; 
+            Vec3f vp1 = P - v1; 
+            C = edge1.cross(vp1); 
+            if (N.dot(C) < 0) continue; // P is on the right side 
+         
+            // edge 2
+            Vec3f edge2 = v0 - v2; 
+            Vec3f vp2 = P - v2; 
+            C = edge2.cross(vp2); 
+            if (N.dot(C) < 0) continue; // P is on the right side 
+            
+            return true; // this ray hits the triangle    
+        }
+
+        return false;
+
+    }
+
     void setVertices(std::list<Vec3f> v) { m_vertices = v; }
+    std::list<Vec3f> getVertices() { return m_vertices; }
     void setUVs(std::list<Vec2f> u) { m_uvs = u; }
     void setNormals(std::list<Vec3f> n) { m_normals = n; }
 

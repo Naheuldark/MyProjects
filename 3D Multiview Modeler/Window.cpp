@@ -1,6 +1,5 @@
 #include "Window.h"
 
-#include <iostream>
 
 void setProjection(int new_width, int new_height)
 {
@@ -53,6 +52,28 @@ void changeSize(int new_width,int new_height)
     glutPositionWindow(border, (height + border)/2);
     glutReshapeWindow(width/3 - border*3/2, height/2 - border*3/2);
     if (isPersp) setProjection(width/3 - border*3/2, height/2 - border*3/2);
+}
+
+
+Vec3f getWorldCoordinates(int x, int y)
+{
+    GLint viewport[4];
+    GLdouble modelview[16];
+    GLdouble projection[16];
+    GLfloat winX, winY, winZ;
+    GLdouble posX, posY, posZ;
+ 
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+ 
+    winX = (float)x;
+    winY = (float)viewport[3] - (float)y;
+    glReadPixels(x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+ 
+    gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+ 
+    return Vec3f(posX, posY, posZ);
 }
 
 
@@ -111,7 +132,7 @@ void generateOBJ()
          mesh != renderables.end();
          mesh++) {
         
-        std::list<Vec3f> vertices = (*mesh).getComputedVertices();
+        std::list<Vec3f> vertices = mesh->getComputedVertices();
 
         for (std::list<Vec3f>::iterator vert = vertices.begin();
              vert != vertices.end();
@@ -126,4 +147,73 @@ void generateOBJ()
     }
 
     obj_file.close();
+}
+
+
+
+
+void generateIMG()
+{
+    std::ofstream bmp_file;
+    bmp_file.open("Output/scene.ppm");
+
+    std::vector<unsigned char> pixels(1 * 1 * 3);
+
+    bmp_file << "P3" << std::endl;
+    bmp_file << width*2/3 << " " << height << std::endl;
+    bmp_file << "255" << std::endl;
+
+    /*
+     ***  Custom Shadow Algorithm ***
+     Get the point of the image in the 3D scene
+     Compute a ray from this point to the light
+     If there is at least an intersection
+        Color = black
+     Else
+        Color = readPixel
+     */
+
+    for (int j = height; j >= 0; --j) {
+        //std::cout << "\n\nLine " << j << std::endl; 
+        for (int i = 0; i < width*2/3; ++i)  {
+            Vec3f point3D = getWorldCoordinates(i+width/3,j);
+            bool intersection = false;
+
+            glReadPixels(i,j,
+                         1,1,
+                         GL_RGB, GL_UNSIGNED_BYTE,
+                         &pixels[0]);
+
+            if ((int)pixels[0] == 25 &&     // If it's a background pixel
+                (int)pixels[1] == 25 &&     // there is no need to compute
+                (int)pixels[2] == 25) {     // the shadows!! ==> SAVE TIME
+                bmp_file << (int)pixels[0] << " ";
+                bmp_file << (int)pixels[1] << " ";
+                bmp_file << (int)pixels[2] << " ";
+            } else {
+                for (std::list<Mesh3D>::iterator mesh = renderables.begin();
+                     mesh != renderables.end();
+                     mesh++) {
+                    
+                    intersection = mesh->intersect(point3D, Vec3f(light_pos[0], light_pos[1], light_pos[2]));
+                    if (intersection == true)
+                        break;
+                
+                }
+
+                if (intersection) {
+                    bmp_file << 0 << " ";
+                    bmp_file << 0 << " ";
+                    bmp_file << 0 << " ";
+                } else {
+                    bmp_file << (int)pixels[0] << " ";
+                    bmp_file << (int)pixels[1] << " ";
+                    bmp_file << (int)pixels[2] << " ";
+                }
+            }
+        }
+        bmp_file << std::endl;
+    }
+    std::cout << "Done" << std::endl;
+    bmp_file.close();
 }

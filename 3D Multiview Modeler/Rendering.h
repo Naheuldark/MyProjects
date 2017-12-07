@@ -19,12 +19,13 @@
 extern int mainWindow, subWindow1, subWindow2, utilityWindow;
 extern float x, y, z, lx, ly, lz;
 extern int frame;
-extern long time, timebase;
+extern long my_time, timebase;
 extern char fps[50];
 extern std::list<char*> historic;
 extern float angle, deltaAngle, deltaForward, deltaRight;
 extern int sceneToRender;
 extern int width, height, border;
+extern float light_pos[];
 
 
 void renderScene();

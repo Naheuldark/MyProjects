@@ -34,6 +34,26 @@ void processNormalKeys(unsigned char key, int x, int y)
             deltaForward = -0.5f;
             break;
 
+        // Move the light
+        case 'i':
+            light_pos[0] += 0.5f;
+            break;
+        case 'k':
+            light_pos[0] -= 0.5f;
+            break;
+        case 'o':
+            light_pos[1] += 0.5f;
+            break;
+        case 'l':
+            light_pos[1] -= 0.5f;
+            break;
+        case 'p':
+            light_pos[2] += 0.5f;
+            break;
+        case 'm':
+            light_pos[2] -= 0.5f;
+            break;
+
     }
 
     glutSetWindow(mainWindow);

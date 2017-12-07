@@ -14,4 +14,4 @@ $(PROGRAM_NAME): $(PROGRAM_NAME).o PopUpMenu.o Keyboard.o Mouse.o Window.o Drawi
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 
 clean:
-	$(RM) -f *.o $(PROGRAM_NAME)$(EXEEXT) *.obj
+	$(RM) -f *.o $(PROGRAM_NAME)$(EXEEXT) Output/*

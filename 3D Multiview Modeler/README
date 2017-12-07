@@ -2,6 +2,14 @@
 *       3D MULTIVIEW MODELER        *
 *************************************
 
+DIRECTORIES:
+- Meshes
+    Stores all the meshes used by the app
+- Output
+    Stores all the user's generated outputs (OBJ files of the rendered scene)
+- Textures
+    Stores all the textures (both BMP and PPM)
+
 FILES:
 - Camera
     Declarations and functions for the camera
@@ -67,20 +75,20 @@ FUNCTIONALITIES:
     + switch between "fill" mode and "wireframe" mode
     + draw features (not yet implemented)
 - Visualize textured OBJ files loaded into the scene, provided with a simple lighting system
+- Draw new assets (cubes, points and spheres) into the scene, placed dynamically by the user using ray-placing (the object is located at the 'closest' position from the camera)
 
 
 KNOWN BUGS TO BE FIXED:
-- Some unknown lag may appears after several rotation around the whole scene
+- FIXED ## Some unknown lag may appears after several rotation around the whole scene
     --> the potential problem might be that some rendering is made incorrectly
-- The objects in the scene appear transparent
-    --> an option might not have been enabled or (unlikely since we use Blender OBJ files) the normals are not correct
+- FIXED ## The objects in the scene appear transparent
 
 
 TODO:
 - DONE ## Generate a OBJ file
-- Generate an image using ray tracing of the current view
+- DONE ## Generate an image using ray tracing of the current view
 - DONE ## Add lights in the scene
-- ALMOST DONE ## Draw features in the scene
+- DONE ## Draw features in the scene
 - DONE ## Map textures on the objects
 - Move the camera in 3D (instead of the current 2D plane)
 - and even more...
