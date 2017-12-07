@@ -6,7 +6,7 @@ DIRECTORIES:
 - Meshes
     Stores all the meshes used by the app
 - Output
-    Stores all the user's generated outputs (OBJ files of the rendered scene)
+    Stores all the user's generated outputs (OBJ files and image files of the rendered scene)
 - Textures
     Stores all the textures (both BMP and PPM)
 
@@ -62,6 +62,7 @@ USAGE:
 OUTPUT:
 - main.exe
 - possible .obj files if the user uses the "Export as OBJ file" function
+- possible .ppm files if the user uses the "Export as image file" function
 
 
 FUNCTIONALITIES:
@@ -73,7 +74,7 @@ FUNCTIONALITIES:
 - See a FPS counter in real time
 - Create a menu, accessible with a right-click, allowing the user to:
     + switch between "fill" mode and "wireframe" mode
-    + draw features (not yet implemented)
+    + draw features
 - Visualize textured OBJ files loaded into the scene, provided with a simple lighting system
 - Draw new assets (cubes, points and spheres) into the scene, placed dynamically by the user using ray-placing (the object is located at the 'closest' position from the camera)
 
